@@ -44,7 +44,7 @@ const Navbar: FC<NavbarProps> = ({ links }) => (
         onClick={async () => 
           { 
             console.log('Button clicked, starting transaction');
-            const transaction = Sentry.startTransaction({ name: 'buttonClick' });
+            const transaction = Sentry.startTransaction({ name: 'Frontend - Making API Call' });
 
             Sentry.getCurrentHub().configureScope(scope => scope.setSpan(transaction));
 
