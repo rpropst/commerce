@@ -43,13 +43,32 @@ const Navbar: FC<NavbarProps> = ({ links }) => (
         type="button"
         onClick={async () => 
           { 
-            console.log('Calling api')
-            const response = await fetch('/api/error')
+            console.log('Button clicked, starting transaction');
+            const transaction = Sentry.startTransaction({ name: 'Frontend - Making API Call' });
+
+            Sentry.getCurrentHub().configureScope(scope => scope.setSpan(transaction));
+
+            console.log('Calling api');
+            const response = await fetch('/api/error');
             console.log(response.ok)
             if(!response.ok) {
-              Sentry.captureException("API Call to /api/error failed")
+              const { status: statusCode, statusText } = response;
+
+              const err = new Error(`API Call to /api/error failed: ${statusCode} ${statusText}`);
+
+              Sentry.withScope((scope) => {
+                scope.setTags({
+                  statusCode,
+                  statusText
+                });
+              })
+
+              console.log("response was not OK...")
+              Sentry.captureException(err);
             }
-            const data = response.json()
+            console.log("Response data:", response.json());
+            console.log("Finishing transaction");
+            transaction.finish();
           }
         }
       >
