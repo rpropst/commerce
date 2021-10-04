@@ -50,7 +50,6 @@ const Navbar: FC<NavbarProps> = ({ links }) => (
 
             console.log('Calling api');
             const response = await fetch('/api/error');
-            console.log(response.ok)
             if(!response.ok) {
               const { status: statusCode, statusText } = response;
 
@@ -63,16 +62,40 @@ const Navbar: FC<NavbarProps> = ({ links }) => (
                 });
               })
 
-              console.log("response was not OK...")
               Sentry.captureException(err);
             }
-            console.log("Response data:", response.json());
             console.log("Finishing transaction");
             transaction.finish();
           }
         }
       >
         Generate Server Error
+      </button>
+      <button
+        type="button"
+        onClick={async () => {
+            const transaction = Sentry.startTransaction({ name: 'Getting results from Foo' });
+
+            Sentry.getCurrentHub().configureScope(scope => scope.setSpan(transaction));
+
+            const response = await fetch('/api/foo');
+            if(!response.ok) {
+              const { status: statusCode, statusText } = response;
+
+              const err = new Error(`API Call to /api/foo failed: ${statusCode} ${statusText}`);
+
+              Sentry.withScope((scope) => {
+                scope.setTags({
+                  statusCode,
+                  statusText
+                });
+              })
+
+              Sentry.captureException(err);
+            }
+            transaction.finish();
+        }}>
+        
       </button>
       <div className={s.nav}>
         <div className="flex items-center flex-1">
