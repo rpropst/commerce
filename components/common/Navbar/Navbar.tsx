@@ -95,7 +95,7 @@ const Navbar: FC<NavbarProps> = ({ links }) => (
             }
             transaction.finish();
         }}>
-        Get Foo
+        Get My Cool Foo
       </button>
       <div className={s.nav}>
         <div className="flex items-center flex-1">
