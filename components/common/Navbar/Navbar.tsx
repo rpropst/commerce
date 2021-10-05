@@ -69,7 +69,7 @@ const Navbar: FC<NavbarProps> = ({ links }) => (
           }
         }
       >
-        Generate Server Error
+        Generate Server Error&nbsp;&nbsp;&nbsp;
       </button>
       <button
         type="button"
@@ -95,7 +95,7 @@ const Navbar: FC<NavbarProps> = ({ links }) => (
             }
             transaction.finish();
         }}>
-        Get My Cool Foo
+        Get My Cool Foo&nbsp;&nbsp;&nbsp;
       </button>
       <div className={s.nav}>
         <div className="flex items-center flex-1">
