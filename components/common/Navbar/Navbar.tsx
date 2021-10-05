@@ -97,7 +97,33 @@ const Navbar: FC<NavbarProps> = ({ links }) => (
         }}>
         Get My Cool Foo&nbsp;&nbsp;&nbsp;
       </button>
-      <div className={s.nav}>
+      <button
+        type="button"
+        onClick={async () => {
+            const transaction = Sentry.startTransaction({ name: 'Getting results from Foo' });
+
+            Sentry.getCurrentHub().configureScope(scope => scope.setSpan(transaction));
+
+            const response = await fetch('/api/newFeature');
+            if(!response.ok) {
+              const { status: statusCode, statusText } = response;
+
+              const err = new Error(`API Call to /api/newFeature failed: ${statusCode} ${statusText}`);
+
+              Sentry.withScope((scope) => {
+                scope.setTags({
+                  statusCode,
+                  statusText
+                });
+              })
+
+              Sentry.captureException(err);
+            }
+            transaction.finish();
+        }}>
+        Awesome new feature!&nbsp;&nbsp;&nbsp;
+      </button>
+        <div className={s.nav}>
         <div className="flex items-center flex-1">
           <Link href="/">
             <a className={s.logo} aria-label="Logo">
